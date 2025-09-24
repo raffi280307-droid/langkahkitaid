@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)file:///C:/Users/uzer/Documents/mood%20tracker.html -->
+<html lang="id"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Langkahkita.id — Mood Tracker</title>
+  <style>
+    :root{
+      --blue:#6CB4EE; /* happy */
+      --yellow:#FFD166; /* capek */
+      --pink:#FFB6C1; /* mellow */
+      --green:#8FD694; /* excited */
+      --bg:#f7fbfc;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --radius:12px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    body{background:var(--bg); margin:0; padding:24px; color:#0f172a}
+    .wrap{max-width:900px; margin:0 auto}
+    header{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+    .brand{display:flex;flex-direction:column}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    @media(max-width:880px){.grid{grid-template-columns:1fr;}}
+
+    .card{background:var(--card); padding:16px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    .mood-row{display:flex;gap:8px;margin-top:12px}
+    .mood-btn{flex:1;padding:12px;border-radius:10px;border:0;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px;justify-content:center}
+    .mood-emoji{font-size:18px}
+
+    label{display:block;font-size:13px;margin-top:12px;color:var(--muted)}
+    input[type=text], textarea, input[type=date]{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef6;margin-top:6px}
+    textarea{min-height:80px;resize:vertical}
+    .actions{display:flex;gap:8px;margin-top:12px}
+    button.primary{background:var(--blue);color:white;padding:10px 12px;border-radius:10px;border:0;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid #dbeaf7;padding:8px 10px;border-radius:10px;cursor:pointer}
+
+    .list-small{max-height:300px;overflow:auto;margin-top:12px}
+    .entry{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;border:1px solid #f1f7fb;margin-bottom:8px}
+    .entry .meta{font-size:13px;color:var(--muted)}
+    .pill{padding:6px 10px;border-radius:999px;font-weight:700}
+
+    .summary{margin-top:12px}
+    canvas{width:100%;height:160px}
+	
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+   <img src="./Langkahkita.id — Mood Tracker_files/8ArF64r.jpg" alt="Langkahkita" width="200">
+
+
+
+
+        <h1>Langkahkita.id — Mood Tracker</h1>
+        <p class="lead">Catat suasana hati harianmu. Pilih mood, tulis singkat, lihat perkembanganmu.</p>
+      </header></div>
+    
+
+    <main class="grid">
+      <section>
+        <div class="card">
+          <h3>Catat Mood Hari Ini</h3>
+          <label for="date">Tanggal</label>
+          <input type="date" id="date">
+
+          <label>Pilih Mood</label>
+          <div class="mood-row">
+            <button class="mood-btn" data-mood="happy" style="background:linear-gradient(135deg,rgba(108,180,238,0.12),rgba(108,180,238,0.06));color:var(--blue)"><span class="mood-emoji">😊</span> happy</button>
+            <button class="mood-btn" data-mood="capek" style="background:linear-gradient(135deg,rgba(255,209,102,0.12),rgba(255,209,102,0.06));color:var(--yellow)"><span class="mood-emoji">😴</span> capek</button>
+            <button class="mood-btn" data-mood="mellow" style="background:linear-gradient(135deg,rgba(255,182,193,0.12),rgba(255,182,193,0.06));color:var(--pink)"><span class="mood-emoji">😔</span> mellow</button>
+            <button class="mood-btn" data-mood="excited" style="background:linear-gradient(135deg,rgba(143,214,148,0.12),rgba(143,214,148,0.06));color:var(--green)"><span class="mood-emoji">🤩</span> excited</button>
+          </div>
+
+          <label for="note">Catatan singkat (opsional)</label>
+          <textarea id="note" placeholder="Apa yang terjadi hari ini? (contoh: ujian, ngobrol sama teman, istirahat)"></textarea>
+
+          <div class="actions">
+            <button id="save" class="primary">Simpan</button>
+            <button id="export" class="ghost">Ekspor CSV</button>
+            <button id="clear" class="ghost">Hapus Semua</button>
+          </div>
+
+          <div class="summary card" style="margin-top:20px;margin-bottom:80px;padding:12px;background:linear-gradient(135deg,#ffffff,#fcfdff)">
+  <h4>Ringkasan Mingguan</h4>
+  <canvas id="chart" width="861" height="200"></canvas>
+  <div style="font-size:12px;color:var(--muted);margin-top:50px">
+    Warna: <span style="color:var(--blue)">happy</span>, 
+    <span style="color:var(--yellow)">capek</span>, 
+    <span style="color:var(--pink)">mellow</span>, 
+    <span style="color:var(--green)">excited</span>
+  </div>
+</div>
+
+
+
+        <div class="card" style="margin-top:12px">
+          <h4>Catatan Terakhir</h4>
+          <div id="entries" class="list-small"><div class="entry"><div><div style="font-weight:700">excited</div><div class="meta">2025-09-24 • </div></div><div><span class="pill" style="background: rgb(143, 214, 148); color: rgb(8, 51, 68);"> </span></div></div></div>
+        </div>
+      </div></section>
+
+      <aside>
+        <div class="card">
+          <h4>Tentang Mood Tracker</h4>
+          <p style="color:var(--muted);font-size:13px">Tracker ini membantu kamu mengenali pola perasaan. Gunakan tiap hari untuk melihat perkembangan emosionalmu. Data tersimpan aman di perangkat (localStorage).</p>
+
+          <h4 style="margin-top:12px">Panduan Singkat</h4>
+          <ol style="color:var(--muted);font-size:13px;padding-left:18px">
+            <li>Pilih tanggal (default hari ini).</li>
+            <li>Pilih satu mood yang paling mewakili hari ini.</li>
+            <li>Tulis catatan singkat bila perlu, lalu tekan Simpan.</li>
+            <li>Lihat ringkasan mingguan di grafik.</li>
+          </ol>
+
+          <h4 style="margin-top:12px">Privasi</h4>
+          <p style="color:var(--muted);font-size:13px">Catatan hanya tersimpan di perangkatmu. Jika butuh bantuan lebih lanjut, gunakan fitur Langkah Selanjutnya pada platform.</p>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div style="max-width:900px;margin-top:8px">Versi prototype — Langkahkita.id Mood Tracker • Simpan data di perangkat • Butuh fitur integrasi AI/backup? Kita kembangkan berikutnya.</div>
+    </footer>
+  
+
+<script>
+(function(){
+  const dateEl=document.getElementById('date');
+  const noteEl=document.getElementById('note');
+  const saveBtn=document.getElementById('save');
+  const entriesEl=document.getElementById('entries');
+  const exportBtn=document.getElementById('export');
+  const clearBtn=document.getElementById('clear');
+  const moodButtons=document.querySelectorAll('.mood-btn');
+  const chartCanvas=document.getElementById('chart');
+
+  let selectedMood=null;
+  const moodMap={happy:{label:'happy', color:getComputedStyle(document.documentElement).getPropertyValue('--blue').trim()},
+                capek:{label:'capek', color:getComputedStyle(document.documentElement).getPropertyValue('--yellow').trim()},
+                mellow:{label:'mellow', color:getComputedStyle(document.documentElement).getPropertyValue('--pink').trim()},
+                excited:{label:'excited', color:getComputedStyle(document.documentElement).getPropertyValue('--green').trim()}};
+
+  function todayISO(){const d=new Date();return d.toISOString().slice(0,10)}
+  dateEl.value=todayISO();
+
+  moodButtons.forEach(b=>b.addEventListener('click',()=>{
+    selectedMood=b.dataset.mood;
+    moodButtons.forEach(x=>x.style.outline='0');
+    b.style.outline='3px solid rgba(0,0,0,0.06)';
+  }))
+
+  function loadEntries(){
+    const raw=localStorage.getItem('lk_entries')||'[]';
+    try{return JSON.parse(raw)}catch(e){return []}
+  }
+
+  function saveEntries(arr){localStorage.setItem('lk_entries',JSON.stringify(arr))}
+
+  function renderEntries(){
+    const arr=loadEntries().slice().reverse();
+    entriesEl.innerHTML='';
+    if(!arr.length){entriesEl.innerHTML='<div style="color:var(--muted)">Belum ada catatan.</div>';return}
+    arr.forEach(item=>{
+      const div=document.createElement('div');div.className='entry';
+      const left=document.createElement('div');
+      left.innerHTML=`<div style="font-weight:700">${moodMap[item.mood].label}</div><div class=\"meta\">${item.date} • ${item.note?item.note:''}</div>`;
+      const right=document.createElement('div');
+      const pill=document.createElement('span');pill.className='pill';pill.style.background=moodMap[item.mood].color;pill.style.color='#083344';pill.textContent=' ';
+      right.appendChild(pill);
+      div.appendChild(left);div.appendChild(right);
+      entriesEl.appendChild(div);
+    })
+  }
+
+  function addEntry(date,mood,note){
+    if(!mood) return alert('Pilih mood terlebih dahulu.');
+    const arr=loadEntries();
+    // prevent duplicate same-date entry: replace
+    const idx=arr.findIndex(e=>e.date===date);
+    const record={date,mood,note};
+    if(idx>=0) arr[idx]=record; else arr.push(record);
+    saveEntries(arr);
+    renderEntries();
+    drawChart();
+  }
+
+  saveBtn.addEventListener('click',()=>{
+    addEntry(dateEl.value,selectedMood,noteEl.value.trim());
+    noteEl.value='';
+  })
+
+  exportBtn.addEventListener('click',()=>{
+    const arr=loadEntries();
+    if(!arr.length) return alert('Tidak ada data untuk diekspor.');
+    const csv=['date,mood,note',...arr.map(r=>`${r.date},${r.mood},"${(r.note||'').replace(/"/g,'""')}"`)];
+    const blob=new Blob([csv.join('\n')],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download='langkahkita_moodtracker.csv';a.click();URL.revokeObjectURL(url);
+  })
+
+  clearBtn.addEventListener('click',()=>{
+    if(confirm('Hapus semua catatan di perangkat?')){localStorage.removeItem('lk_entries');renderEntries();drawChart()}
+  })
+
+  function getPastDays(n){
+    const res=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);res.push(d.toISOString().slice(0,10))}return res
+  }
+
+  function aggregateWeek(){
+    const days=getPastDays(7);
+    const arr=loadEntries();
+    const counts={happy:0,capek:0,mellow:0,excited:0};
+    // count per mood over last 7 days
+    days.forEach(day=>{
+      const e=arr.find(x=>x.date===day);
+      if(e) counts[e.mood]++;
+    })
+    return {days,counts}
+  }
+
+  function drawChart(){
+    const ctx=chartCanvas.getContext('2d');
+    const w=chartCanvas.width=chartCanvas.clientWidth*devicePixelRatio;
+    const h=chartCanvas.height=200*devicePixelRatio;
+    ctx.clearRect(0,0,w,h);
+    const {days,counts}=aggregateWeek();
+    const total=Object.values(counts).reduce((a,b)=>a+b,0)||1;
+    const labels=Object.keys(counts).map(k=>moodMap[k].label);
+    const values=Object.keys(counts).map(k=>counts[k]);
+    const colors=Object.keys(counts).map(k=>moodMap[k].color);
+
+    // simple horizontal bars
+    const padding=30*devicePixelRatio;
+    const barH=28*devicePixelRatio;
+    const gap=12*devicePixelRatio;
+    const maxW=w-padding-20*devicePixelRatio;
+    const maxVal=Math.max(...values,1);
+    ctx.font=Math.round(12*devicePixelRatio)+'px Inter, system-ui';
+    labels.forEach((lab,i)=>{
+      const y=padding + i*(barH+gap);
+      // label
+      ctx.fillStyle='#0f172a';
+      ctx.fillText(lab,10*devicePixelRatio,y+barH*0.6);
+      // bar background
+      ctx.fillStyle='#f1f7fb';
+      ctx.fillRect(120*devicePixelRatio,y, maxW, barH);
+      // bar value
+      const wbar = Math.round((values[i]/maxVal) * maxW);
+      ctx.fillStyle=colors[i];
+      ctx.fillRect(120*devicePixelRatio,y, wbar, barH);
+      // value text
+      ctx.fillStyle='#083344';
+      ctx.fillText(values[i], 120*devicePixelRatio + wbar + 8*devicePixelRatio, y+barH*0.6);
+    })
+  }
+
+  // init
+  renderEntries(); drawChart();
+
+  // redraw chart on resize
+  window.addEventListener('resize',()=>{drawChart();});
+
+})();
+</script>
+
+</body></html>
